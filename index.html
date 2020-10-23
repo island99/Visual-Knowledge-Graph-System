@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>Knowledge Base</title>
+    <style type="text/css">
+        html {
+            height: 100%;
+        }
+        
+        body {
+            height: 100%;
+            margin: 0;
+        }
+        
+        #property {
+            width: 94%;
+            height: 29%;
+        }
+        
+        #proul {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        #proul::-webkit-scrollbar {
+            width: 4px;
+            /*height: 4px;*/
+        }
+        
+        #proul::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        #proul::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.9);
+            border-radius: 0;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .autocomplete-suggestions {
+            max-height: 200px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            border: 1px solid #999;
+            background: #efefef;
+            cursor: default;
+            overflow: auto;
+            -webkit-box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64);
+            -moz-box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64);
+            box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64);
+        }
+        
+        .autocomplete-suggestion {
+            padding: 2px 5px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .autocomplete-no-suggestion {
+            padding: 2px 5px;
+        }
+        
+        .autocomplete-selected {
+            background: #efefef;
+        }
+        
+        .autocomplete-suggestions strong {
+            font-weight: bold;
+            color: #000;
+        }
+        
+        .autocomplete-group {
+            padding: 2px 5px;
+        }
+        
+        .autocomplete-group strong {
+            font-weight: bold;
+            font-size: 16px;
+            color: #000;
+            display: block;
+            border-bottom: 1px solid #000;
+        }
+        
+        #input_div {
+            padding: 2% 2% 2% 2%;
+            text-align: center;
+            font-size: 16px;
+        }
+        
+        input,
+        input:focus {
+            outline: medium;
+            text-align: center;
+            margin: auto;
+            line-height: 40px;
+            width: 40%;
+            background: #efefef;
+            border-radius: 40px;
+            border: none;
+        }
+        
+        .btn {
+            width: 8%;
+        }
+        
+        .sidebar {
+            padding-left: 1%;
+            color: #eee;
+            width: 24%;
+            position: absolute;
+            left: 0;
+            top: 8%;
+            height: 92%;
+            transition: all 0.2s ease 0s;
+            background-color: #0b2838;
+        }
+        
+        .sidebar ul {
+            font-size: small;
+        }
+        
+        .main {
+            background-color: #0b2838;
+            overflow: hidden;
+            position: absolute;
+            left: 25%;
+            right: 0;
+            top: 8%;
+            height: 92%;
+            transition: all 0.2s ease 0s;
+        }
+        
+        .big-page .sidebar {
+            left: -25%;
+        }
+        
+        .big-page .main {
+            left: 0;
+        }
+        
+        #banner {
+            color: #fff;
+            width: 100%;
+            background: #0d1c25;
+            height: 8%;
+            display: block;
+            opacity: 0.85;
+        }
+        
+        canvas {
+            background-color: #0b2838;
+        }
+        
+        .link {
+            margin-top: 10px;
+            display: inline-block;
+            overflow: hidden;
+        }
+        
+        .link button {
+            font-size: 16px;
+            padding: 10px 10px;
+            border: 2px solid transparent;
+            background-color: #0d1c25;
+        }
+        
+        .entity_btn,
+        .rela_btn,
+        .entity_rela_btn,
+        .banner_btn {
+            width: 30%;
+            border-radius: 5px;
+            color: #efefef;
+            padding: 8px 20px;
+            margin: 8px 5px;
+            background-color: #0b2838;
+            text-decoration: none;
+            border: 2px solid transparent;
+            cursor: pointer
+        }
+        
+        .banner_btn {
+            width: 120px;
+            display: inline-block;
+            font-weight: bolder;
+        }
+        
+        .selected {
+            margin: 10px;
+            border-color: #eee !important;
+            /* background-color: "#eee"; */
+        }
+    </style>
+</head>
+
+
+<body>
+    <script type="text/javascript" src="js/src/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="js/src/g6.min.js"></script>
+    <script type="text/javascript" src="js/src/axios.min.js"></script>
+    <script type="text/javascript" src="js/src/jquery.autocomplete.js"></script>
+    <script type="text/javascript" src="js/formattrans.js"></script>
+
+    <!-- /* 图的画布容器 */ -->
+    <div id="banner">
+        <!-- <h1>攻击工具知识图谱</h1> -->
+        <div class="link">
+            <button class="banner_btn selected" id="side_change">Sidebar</button>
+        </div>
+    </div>
+    <div>
+
+        <div id='slider' class="sidebar">
+
+            <!-- <div id='entity'>
+                <h4>主要实体类型查询</h4>
+            </div> -->
+            <div id='entity'>
+                <h3>Node Labels</h3>
+            </div>
+            <div id="entity_rela">
+                <h3>Relationships of Nodes </h3>
+            </div>
+            <div id='relation'>
+                <h3>Relationship Types</h3>
+            </div>
+
+
+            <div id="property">
+                <h3>Show Properties</h3>
+                <div id="proul">
+
+                </div>
+            </div>
+        </div>
+        <div class="main">
+            <div id="input_div">
+                <input type="text" placeholder="Please enter key words..." name="country" id="autocomplete" />
+
+            </div>
+            <div id="mountNode"></div>
+        </div>
+
+
+    </div>
+
+    <script>
+        const config = {
+                ip: 'http://' + window.location.hostname.toString(),
+                port: 3000,
+
+            }
+            // console.log(config)
+
+        const color_set = ["#dd6b66",
+            "#759aa0",
+            "#e69d87",
+            "#8dc1a9",
+            "#ea7e53",
+            "#eedd78",
+            "#73a373",
+            "#73b9bc",
+            "#7289ab",
+            "#91ca8c",
+            "#f49f42"
+        ]
+
+        // autocomplete
+        window.onload = async function() {
+            const person_info = {
+                category: 'Person',
+                search_type: 'name',
+            }
+            const movie_info = {
+                category: 'Movie',
+                search_type: 'title',
+            }
+
+            const Person_Teams = await getData(`MATCH (n:${person_info.category}) RETURN n.${person_info.search_type}`);
+            const Movie_Teams = await getData(`MATCH (n:${movie_info.category}) RETURN n.${movie_info.search_type}`);
+            var p = $.map(Person_Teams, function(team) {
+                return {
+                    value: team,
+                    data: person_info
+                };
+            });
+            var m = $.map(Movie_Teams, function(team) {
+                return {
+                    value: team,
+                    data: movie_info
+                };
+            });
+            var teams = p.concat(m);
+            // Initialize autocomplete with local lookup:
+            $('#autocomplete').devbridgeAutocomplete({
+                lookup: teams,
+
+                minChars: 1,
+                onSelect: function(suggestion) {
+                    console.log(suggestion.data);
+                    readNeo4j(suggestion, 3);
+
+                },
+                showNoSuggestionNotice: true,
+                noSuggestionNotice: 'Sorry.. Try other keywords...',
+                groupBy: 'category'
+            });
+
+            var entity_list = await getData(`MATCH(n) RETURN distinct labels(n), count(n)`);
+            var rela_list = await getData(`MATCH p=()-[r]->() RETURN distinct type(r), count(r)`);
+            // console.log(entity_list);
+            for (let entity in entity_list) {
+
+                $('#entity').append(`<button class="entity_btn" onclick="readNeo4j(this,0)" name='${entity_list[entity][0]}'><b>${entity_list[entity][0]}</b> (${entity_list[entity][1]})</button>`);
+                $('#entity_rela').append(`<button class="entity_rela_btn" onclick="readNeo4j(this,1)" name='${entity_list[entity][0]}'><b>${entity_list[entity][0]}</b> (${entity_list[entity][1]})</button>`);
+            }
+            for (let relation in rela_list) {
+                $('#relation').append(`<button class="rela_btn" onclick="readNeo4j(this,4)" name='${rela_list[relation][0]}'><b>${rela_list[relation][0]}</b> (${rela_list[relation][1]})</button>`);
+            }
+        };
+
+
+        function readNeo4j(node, mode) {
+            console.log(node);
+            // show entities
+            if (mode == 0) {
+                console.log(node);
+                var q = `MATCH p=(n:${node.name}) RETURN n,labels(n) LIMIT 100`;
+                // show relationships of entity
+            } else if (mode == 1) {
+                var q = `MATCH p=(n:${node.name})-[a]-(x) RETURN n,labels(n),a,type(a),x,labels(x) LIMIT 100`;
+                // show relationships
+            } else if (mode == 4) {
+                var q = `MATCH p=(n)-[r:${node.name}]->(x) RETURN n,labels(n),r,type(r),x,labels(x) LIMIT 25`;
+                // Doble click to expand
+            } else if (mode == 2) {
+                var q = `MATCH (n)-[a]-(x) WHERE id(n)=${node.id} RETURN n,labels(n),a,type(a),x,labels(x) LIMIT 100`;
+                $('#autocomplete').val(node.label);
+                //Search from Search Box
+            } else if (mode == 3) {
+                var q = `MATCH (n:${node.data.category}{${node.data.search_type}:'${node.value}'})-[a]-(x) RETURN n,labels(n),a,type(a),x,labels(x)`;
+                // console.log(q);
+                $('#autocomplete').val(node.value);
+
+            }
+            return new Promise((resolve, reject) => {
+                // console.log(`${config.ip}:${config.port}/all`);
+                axios.get(`${config.ip}:${config.port}/all`, {
+                    params: {
+                        query: q
+                    }
+                }).then(res => {
+                    console.log(res.data)
+                    content = nodesFoldToD3(res.data);
+
+                    // console.log(content)
+                    content = JSON.parse(content);
+                    var data = content;
+                    // console.log(data);
+                    changeStyle(data)
+                    graph.data(data);
+                    graph.render();
+                    //  console.log(content);
+
+
+                }).catch(err => {
+                    console.log(err)
+                })
+            });
+        }
+
+        function toggleSidebar() {
+
+            $("body").toggleClass("big-page");
+            var obj = this;
+            $(obj).toggleClass("selected");
+
+
+            return false;
+        }
+
+
+
+        $("#side_change").click(toggleSidebar);
+
+        async function getFromNeo4j(para) {
+
+            return await axios.get(`${config.ip}:${config.port}/all?query=${para}`)
+        }
+
+        async function getData(para) {
+            let neo4jData = await getFromNeo4j(para);
+            return neo4jData.data.data
+
+            // return group_Teams
+        }
+    </script>
+    <script>
+        // G6 action
+        G6.registerBehavior('node-activate', {
+            getDefaultCfg() {
+                return {
+                    multiple: true
+                };
+            },
+            getEvents() {
+                return {
+                    'node:mouseenter': 'onMouseenter',
+                    'node:dblclick': 'onDblclick'
+                };
+            },
+            onMouseenter(e) {
+
+                $('#proul').children().remove();
+                var pros = $.extend({}, e.item.getModel().properties);
+
+                for (var p in pros) {
+                    $('#proul').append(
+                        '<ul class="pro_slider"><li><b>' + p + ' : </b> ' + pros[p] + '</li>')
+                };
+            },
+
+
+            onDblclick(e) {
+                readNeo4j(e.item.getModel(), 2)
+                    // console.log(e.item.getModel());
+            }
+        });
+
+
+
+        const graph = new G6.Graph({
+            container: 'mountNode',
+            width: window.screen.availWidth,
+            height: document.body.clientHeight,
+            modes: {
+                default: ['drag-node', 'node-activate'],
+            },
+            layout: {
+                type: 'force',
+                center: [window.screen.availWidth * 0.45, document.body.clientHeight * 0.4],
+                preventOverlap: true,
+                linkDistance: 180,
+            },
+
+            defaultNode: {
+                size: 28,
+                color: '#5B8FF9',
+                style: {
+                    lineWidth: 2,
+                    fill: '',
+                    stroke: '',
+                },
+                label: 'node-label',
+                labelCfg: {
+                    position: 'top',
+                    style: {
+                        fill: '#ddd',
+                    },
+                }
+
+            },
+            defaultEdge: {
+                size: 1,
+                color: '#aaa',
+                label: 'node-label',
+                labelCfg: {
+                    style: {
+                        fill: '#ddd',
+                        stroke: '',
+                    },
+                },
+            }
+        });
+
+
+        function changeStyle(data) {
+            const nodes = data.nodes;
+
+            nodes.forEach((node) => {
+
+                if (!node.style) {
+                    node.style = {};
+                }
+                node.style = {
+                    fill: color_set[node.id % color_set.length],
+                    stroke: '',
+                };
+
+                switch (
+                    node.properties.type // Configure the graph based on the 'type' of nodes 
+                ) {
+                    case ('Person'):
+                        {
+                            node.size = 32;
+                            break;
+                        }
+                }
+            });
+        }
+
+        function refreshDragedNodePosition(e) {
+            const model = e.item.get('model');
+            model.fx = e.x;
+            model.fy = e.y;
+        }
+        graph.on('node:dragstart', (e) => {
+            graph.layout();
+            refreshDragedNodePosition(e);
+        });
+        graph.on('node:drag', (e) => {
+            refreshDragedNodePosition(e);
+        });
+    </script>
+
+</body>
+
+</html>
