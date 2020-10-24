@@ -1,5 +1,5 @@
-var username = neo4j;
-var password = 000000;
+var username = 'neo4j';
+var password = '000000';
 
 function allnodesPromise(query) {
     return new Promise((resolve, reject) => {
