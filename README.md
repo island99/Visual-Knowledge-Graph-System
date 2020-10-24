@@ -19,15 +19,15 @@ Neo4j:https://github.com/neo4j/neo4j
 
 ### Description
 
+  
+  可视化知识图谱系统是一个超轻量级但完整的web系统，neo4j作为图数据库存储节点和关系，使用Nodejs启动服务。
 
-可视化知识图谱系统是一个超轻量级但完整的web系统，neo4j作为图数据库存储节点和关系，使用Nodejs启动服务。
 
-
-本系统使用的数据是Neo4j自带的示例数据。
+  本系统使用的数据是Neo4j自带的示例数据。
 
 ### Functions
 
-现有的功能很有限，他们包括：
+  现有的功能很有限，他们包括：
 
 - 按照名称搜索实体: 带有自动补全搜索框，通过搜索展示目标节点。
 - 按照实体类型展示实体节点: 自动从数据库中获取全部的实体类型，点击按钮，展示符合条件的部分实体。
@@ -43,32 +43,32 @@ Neo4j:https://github.com/neo4j/neo4j
 
 - Database
 
-为了更好的复现本系统中的数据，新建一个Neo4j数据库，利用tutorials的demo中的Cypher语句创建数据。
+  为了更好的复现本系统中的数据，新建一个Neo4j数据库，利用tutorials的demo中的Cypher语句创建数据。
 ```
 :play movie-graph
 ```
-选择第二页中的Cypher语句，完成demo数据的创建。
+  选择第二页中的Cypher语句，完成demo数据的创建。
 
 <img src="https://github.com/island99/Visual-Knowledge-Graph-System/blob/main/gif/datademo.png" width=800>
 
 - Login
 
-backend/all.js文件首行设定了neo4j数据库的登录名和密码，第一次运行需要进行配置。
+  backend/config.json 文件设定了neo4j数据库的登录名和密码，第一次运行需要进行配置。
 
 ```
-var username = 'neo4j';
-var password = '000000';
+    "username": "neo4j",
+    "password": "000000"
 ```
 - install
 
 ```
-npm install 
+  npm install 
 ```
 
 - Run
 ```
-node .\backend\index.js
-http-server.cmd
+  node .\backend\index.js
+  http-server.cmd
 ```
-
-如有问题和建议欢迎通过Issues与我交流！
+  
+  如有问题和建议欢迎通过Issues与我交流！
